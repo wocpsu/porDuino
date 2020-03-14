@@ -96,6 +96,10 @@ void btDataCheck()
         btLogPrintButtonPushed = true;
         myBTInt = Serial3.parseInt();
       }
+      else if (myBTFloat == 244.1)
+      {
+        printdashboardToBT();
+      }
       while(Serial3.available()) ///Clear buffer afterwards
       {
         Serial3.read();
@@ -119,6 +123,34 @@ void printSettingsToBT()
     Serial3.print(injectorTestEnabled);
     Serial3.print(",");
     Serial3.write("::??");
+}
+void printdashboardToBT()
+{
+    Serial3.write("dash::");
+    Serial3.write("empty for now::");
+    Serial3.print(AFRLFiltered);
+    Serial3.print(",");
+    Serial3.print(AFRRFiltered);
+    Serial3.print(",");
+    Serial3.print(BoostFiltered);
+    Serial3.print(",");
+    Serial3.print(ThrottleFiltered);
+    Serial3.print(",");
+    Serial3.print(MAFFiltered);
+    Serial3.print(",");
+    Serial3.print(RPMFiltered);
+    Serial3.print(",");
+    Serial3.print(injectorPulseWidth);
+    Serial3.print(",");
+    Serial3.print(knockCount);
+    Serial3.print(",");
+    Serial3.print(injectorsEnabled);
+    Serial3.print(",");
+    Serial3.print(injectorPulseWidthLeft);
+    Serial3.print(",");
+    Serial3.print(injectorPulseWidthRight);
+    Serial3.print(",");
+    Serial3.write("::??"); 
 }
 
 void getSettingsFromBT()
