@@ -1,0 +1,14 @@
+!!!!!!!!NO Newline characters in serial command window!!!!!!!!!!!
+Default baud 9600
+Enter the following commands
+AT ///response OK
+AT+NAMEporDuinoECU //Set the name of the device
+AT+BAUD2 ///0 = 9600 2 – 38400 4 – 115200 
+AT+TYPE3
+AT+ANCS1
+AT+RESET
+
+
+////Other stuff
+AT+PASS? get pass //default 000000
+AT+MODE2
