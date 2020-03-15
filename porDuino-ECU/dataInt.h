@@ -138,6 +138,14 @@ boolean screenPlotAFR = false;
 boolean screenPlotAFRBoost = false;
 boolean screenPlotAFRInj = false;
 //AutoTune Stuff
+///Min max input checking
+#define ATMinActiveAFR 9.5
+#define ATMaxActiveAFR 18.0
+#define ATMinActiveRPM 2000
+#define ATMaxActiveBoost 9
+boolean ATSensorError = false;
+boolean ATAFRLeftError = false;
+boolean ATAFRRightError = false;
 #define ATAFRTarget 12.0
 #define ATGain 0.015 
 #define ATMaxAdjustPercent 0.35 ///Max Fuel adjustment to left and right
@@ -159,13 +167,16 @@ boolean alarmLatched;
 boolean AFRLLean;
 boolean AFRRLean;
 #define AFRLeanAlarmThreshold 13
-#define AFRLeanAlarmThresholdTD 750 //Alarm time delay in ms
+#define AFRLeanAlarmThresholdTD 1000 //Alarm time delay in ms
 boolean firstCountLThisEvent =true;
 boolean firstCountRThisEvent =true;
 unsigned long AFRLeanLeftStartTime;
 unsigned long AFRLeanRightStartTime;
 unsigned int AFRLLeanCount;
 unsigned int AFRRLeanCount;
-String sensorFailure = "OKK";
+String ATSensorErrorString = "";
+String ATAFRLeftErrorString = "";
+String ATAFRRightErrorString = "";
+String sensorFailure = "Sensors Ok";
 
 #endif

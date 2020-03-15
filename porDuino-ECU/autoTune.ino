@@ -1,5 +1,9 @@
 void ATautoTune()
 {
+///Check for errors on sensors
+  ATSensorError =  (BoostFiltered > ATMaxActiveBoost) || (RPMFiltered < ATMinActiveRPM);
+  ATAFRLeftError = (AFRLFiltered > ATMaxActiveAFR) || (AFRLFiltered < ATMinActiveAFR);
+  ATAFRRightError = (AFRRFiltered > ATMaxActiveAFR) || (AFRRFiltered < ATMinActiveAFR);
   ///Tunes the piggyback injectors when the injectors are firing based off AFR readings
   int ATCurrentRPMBand = min((int)max((RPMFiltered-ATMinRPM)/ATRPMSteps,0),ATNumRPMBands-1);
   int ATCurrentBoostBand = min((int)max((BoostFiltered-ATMinBoost)/ATBoostSteps,0),ATNumBoostBands-1);
@@ -15,12 +19,26 @@ void ATautoTune()
    float ATErrorR = AFRRFiltered - ATAFRTarget;
    float ATFuelAdjustmentL = ATErrorL*ATGain;
    float ATFuelAdjustmentR = ATErrorR*ATGain;
-   ATnewMapValueL = constrain(currentFuelAdjustmentL + ATFuelAdjustmentL,(1-ATMaxAdjustPercent),(1+ATMaxAdjustPercent));
-   ATnewMapValueR = constrain(currentFuelAdjustmentR + ATFuelAdjustmentR,(1-ATMaxAdjustPercent),(1+ATMaxAdjustPercent));
-  //Write to AFR Map
+   ///Calc new fuel adjusment if sensors are good, if not use last RAM value
+     if(ATSensorError || ATAFRLeftError)
+     {
+      ATnewMapValueL = currentFuelAdjustmentL;
+     }
+     else
+     {
+      ATnewMapValueL = constrain(currentFuelAdjustmentL + ATFuelAdjustmentL,(1-ATMaxAdjustPercent),(1+ATMaxAdjustPercent));
+     }
+     if(ATSensorError || ATAFRRightError)
+     {
+      ATnewMapValueR = currentFuelAdjustmentR;
+     }
+     else
+     {
+      ATnewMapValueR = constrain(currentFuelAdjustmentR + ATFuelAdjustmentR,(1-ATMaxAdjustPercent),(1+ATMaxAdjustPercent));
+     }
+   ///Write updated fuel adjustment to RAM
    ATMapRAM[ATCurrentWriteAddressL] = ATnewMapValueL;
    ATMapRAM[ATCurrentWriteAddressR] = ATnewMapValueR;
-//EEPROM.update(ATCurrentWriteAddress, value)
 }
 
 void ATwriteToEEPROM()
@@ -82,6 +100,7 @@ void ATPrintRAMMap()
          Serial3.print(",");
         }
          Serial3.println("");
+//         delay(100); ///Needed to add delays to avoid overflowing BT Buffer
       }
       ///Print Right Map
       for(int r=0;r<ATNumRPMBands;r++)
@@ -94,6 +113,7 @@ void ATPrintRAMMap()
          Serial3.print(",");
         }
          Serial3.println("");
+//         delay(100); ///Needed to add delays to avoid overflowing BT Buffer
       }
       Serial3.write("::??");
 }

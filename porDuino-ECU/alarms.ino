@@ -1,7 +1,25 @@
 ////////////////////////////////////Alarms///////////////////////
 void alarmHandler ()
 {
-  boolean alarmActive = AFRLLean || AFRRLean;
+  //Sensor Failures
+  if(ATSensorError || ATAFRLeftError || ATAFRRightError)
+  {
+    if(ATSensorError)
+    {
+      ATSensorErrorString = "ATSens,";
+    }
+    if(ATAFRLeftError)
+    {
+      ATAFRLeftErrorString = "ATAFRLeft,";
+    }
+    if(ATAFRRightError)
+    {
+      ATAFRRightErrorString = "ATAFRRight,";
+    }
+    sensorFailure = ATSensorErrorString + ATAFRLeftErrorString + ATAFRRightErrorString;
+  }
+  
+  boolean alarmActive = AFRLLean || AFRRLean || ATSensorError || ATAFRLeftError || ATAFRRightError;
   if(alarmActive)
   {
     alarmLatched = true;
@@ -21,14 +39,6 @@ void alarmHandler ()
   {
    analogWrite(LEDPinError, 0);  
   }
-//  Serial.print("Auto inj fire = ");
-//  Serial.print(autoInjFire);
-//  Serial.print("  alarm active = ");
-//  Serial.print(alarmActive);
-//  Serial.print("  Alarm Latched = ");
-//  Serial.print(alarmLatched);
-//  Serial.print("  AFRL Lean = ");
-//  Serial.println(AFRLLean);
   
 }
 ////////////////////////////////////Lean ////////////////////////////
