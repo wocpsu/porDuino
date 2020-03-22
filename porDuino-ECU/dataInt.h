@@ -1,10 +1,24 @@
 #ifndef dataInt_h
 #define dataInt_h
+///Accounting for different versions of harware
+#define porDuinoVersion 2
+  #if porDuinoVersion == 2
+    #define relayClosed HIGH
+    #define relayOpen LOW
+  #else
+    #define SDCARD
+    #define LCDScreen
+    #define relayClosed LOW
+    #define relayOpen HIGH
+  #endif
+/////
 #include <EEPROM.h> //EEPROM Library for Auto Tune
 #include <TFT_HX8357.h> // Hardware-specific library
-///////////////Initalize Screen
-TFT_HX8357 lcd = TFT_HX8357();       // Invoke custom library
-#define TFT_GREY 0x7BEF
+#if LCDScreen
+  ///////////////Initalize Screen
+  TFT_HX8357 lcd = TFT_HX8357();       // Invoke custom library
+  #define TFT_GREY 0x7BEF
+#endif
 ////pinchange interrupts library
 #include <PinChangeInterrupt.h> //////////////**********I DISABLED ALL OTHER PIN CHANGE INTERRUPTS EXCEPT PCINT_ENABLE_PCINT16 in settings file
 #define PCINT_ENABLE_PCINT16
@@ -37,7 +51,6 @@ unsigned long timeLastRPM;
 int InjectorLeftPin = 11;
 int InjectorRightPin = 12;
 int InjectorRelayPin = 4;
-//int InjectorRelayPin2 = 4;
 int sirenPin = A0;
 //Digitals
 int LEDPinG = 10;
@@ -104,8 +117,8 @@ boolean injStartChkRanAlready;
 boolean injectorTestRunning;
 boolean injectorTestFireInjectors;
 #define InjStrChkThrottleCancelThreshold 30 ////throtte threshold for canceling the start check
-#define InjStrChkAFRLessThanThres 15 ///AFR ust be below this threshold to do the start check
-#define InjStrChkAFRGreaterThanThres 9.8 ///AFR ust be below this threshold to do the start check
+#define InjStrChkAFRLessThanThres 15 ///AFR must be below this threshold to do the start check
+#define InjStrChkAFRGreaterThanThres 10.0 ///AFR must be greater than this threshold to do the start check
 #define InjStrChkAFRDropThreshold 1.5 //How much AFR ratio must drop to consider injector check to be good
 #define InjStrChkPulseTime 500 //How long to pulse injectors during start check
 #define InjStrChkAddTime 2000 //Additional Time to look at AFRS after test has run

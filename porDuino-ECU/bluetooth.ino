@@ -29,43 +29,47 @@ void btDataCheck()
       else if (myBTFloat == 66.4)
       {
         int secondaryScreenSelect = Serial3.parseInt();
-          if(secondaryScreenSelect == 1)
-          {
-          screenMain = true;
-          initMainScreen();
-          ////Other Screen Booleans to false
-          screenPlotAFR = false;
-          screenPlotAFRInj = false;
-          screenPlotAFRBoost = false;
-          }
-          else if(secondaryScreenSelect == 2)
-          {
-          screenPlotAFR = true;
-          reInitGraph = true;
-          ////Other Screen Booleans to false          
-          screenMain = false;
-          screenPlotAFRInj = false;
-          screenPlotAFRBoost = false;
-          }          
-          else if(secondaryScreenSelect == 3)
-          {
-          screenPlotAFRBoost = true;
-          reInitGraph = true;
-          ////Other Screen Booleans to false          
-          screenMain = false;
-          screenPlotAFR = false;
-          screenPlotAFRInj = false;
-          }          
-          else if(secondaryScreenSelect == 4)
-          {
-          screenPlotAFRInj = true;
-          reInitGraph = true;
-          ////Other Screen Booleans to false          
-          screenMain = false;
-          screenPlotAFR = false;
-          screenPlotAFRBoost = false;
-          }
+          #if LCDScreen
+            if(secondaryScreenSelect == 1)
+            {
+            screenMain = true;
+            initMainScreen();
+            ////Other Screen Booleans to false
+            screenPlotAFR = false;
+            screenPlotAFRInj = false;
+            screenPlotAFRBoost = false;
+            }
+            else if(secondaryScreenSelect == 2)
+            {
+            screenPlotAFR = true;
+            reInitGraph = true;
+            ////Other Screen Booleans to false          
+            screenMain = false;
+            screenPlotAFRInj = false;
+            screenPlotAFRBoost = false;
+            }          
+            else if(secondaryScreenSelect == 3)
+            {
+            screenPlotAFRBoost = true;
+            reInitGraph = true;
+            ////Other Screen Booleans to false          
+            screenMain = false;
+            screenPlotAFR = false;
+            screenPlotAFRInj = false;
+            }          
+            else if(secondaryScreenSelect == 4)
+            {
+            screenPlotAFRInj = true;
+            reInitGraph = true;
+            ////Other Screen Booleans to false          
+            screenMain = false;
+            screenPlotAFR = false;
+            screenPlotAFRBoost = false;
+            }
           else if(secondaryScreenSelect == 6)
+          #else
+          if(secondaryScreenSelect == 6)
+          #endif
           {
             printSettingsToBT();
           }          

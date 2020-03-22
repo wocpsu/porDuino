@@ -1,4 +1,5 @@
 ///William O. Curry IV Piggyback ECU GitHub Source Control
+#include "dataInt.h"
 #include "graph.h"
 #include "dataInt.h"
 #include "dataLog.h"
@@ -8,28 +9,32 @@ void setup()
   Serial3.begin(38400);
   pinMode(buttonLogPin, INPUT_PULLUP);
   pinMode(buttonFireInjPin, INPUT_PULLUP);
-  //pinMode(InjectorRelayPin, OUTPUT_PULLUP);
   pinMode(LEDPinG, OUTPUT);
   pinMode(LEDPinError, OUTPUT);
   pinMode(LEDPinInjFiring, OUTPUT);
   pinMode(InjectorLeftPin,OUTPUT);
   pinMode(InjectorRightPin,OUTPUT);
   pinMode(InjectorRelayPin,OUTPUT);
-  digitalWrite(InjectorRelayPin,HIGH);
+  ///Open Relay so no power flows through injectors
+  digitalWrite(InjectorRelayPin,relayOpen);
+  digitalWrite(LEDPinError,HIGH);
   //TCCR1B = TCCR1B & B11111000 | B00000100;  // for for PWM frequency of 122.55 Hz
    TCCR1B = TCCR1B & B11111000 | B00000101;   // for  PWM frequency of 30.64 Hz
 //////////////LCD and OBD Init
+#if LCDScreen
 // Setup the LCD
   lcd.init();
   lcd.setRotation(1);  
   lcd.fillScreen(TFT_BLACK);
   lcd.setTextColor(TFT_RED,TFT_BLACK);
-  //(InjectorRelayPin2,HIGH);
   lcd.drawString("Bill's PORSCHE ECU Display", 70, 150, 4);
   lcd.setTextColor(ORANGE,TFT_BLACK);
+#endif
 /////////////SD Card Init  
       #if SDCARD
-      lcd.drawString("Initializing SD card...", 70, 200, 4);
+        #if LCDScreen
+          lcd.drawString("Initializing SD card...", 70, 200, 4);
+        #endif
       Serial.print("Initializing SD card...");
       delay(500);
       for(int i = 0;i<=5;i++) {
@@ -50,16 +55,22 @@ void setup()
         }
         else
         {
-           lcd.drawString("SD Card Not Found", 70, 250, 4);
-           delay(5000); 
+           #if LCDScreen
+            lcd.drawString("SD Card Not Found", 70, 250, 4);
+           #endif
+           delay(1000); 
         }
         delay(1000);
       #endif
+  
   ATSizeOfArray = ATNumRPMBands*ATNumBoostBands*2;//////////////////////
   ATSetRAMFromEEPROM(); ///Initialize RAM Map from Non-volite EEPROM values
-  initMainScreen();
+  #if LCDScreen
+    initMainScreen();
+  #endif
   attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(RPMPinD), rpmInterrupt, RISING);
   //pinMode(RPMPinD, INPUT_PULLUP);
+  delay(1000);
 }
 ///////////////////////////////////////MAIN LOOP START////////////////////////////////////////////
 void loop()
@@ -81,24 +92,26 @@ alarmHandler();
     printRequestedLog();
     btLogPrintButtonPushed = false;
   }
-  if(((millis()-lastMainPrint) > mainPrintFreq)&& screenMain)
-  {
-    //initScreen();
-    printAFRS();
-    lastMainPrint= millis();
-  }
-  if(screenPlotAFR)
-  {
-    plotData2(AFRLFiltered,AFRRFiltered, CYAN, RED);
-  }
-    if(screenPlotAFRBoost)
-  {
-    plotData3(AFRLFiltered,AFRRFiltered,BoostFiltered, CYAN, RED, GREEN, "AFRL", "AFRR", "BOOST","AFR", "AFR",  "PSI");
-  }
-  if(screenPlotAFRInj)
-  {
-    plotData3(AFRLFiltered,AFRRFiltered,injectorPulseWidth/10, CYAN, RED, GREEN, "AFRL", "AFRR", "IPW","AFR", "AFR",  "%/10");
-  }
+  #if LCDScreen
+    if(((millis()-lastMainPrint) > mainPrintFreq)&& screenMain)
+    {
+      //initScreen();
+      printAFRS();
+      lastMainPrint= millis();
+    }
+    if(screenPlotAFR)
+    {
+      plotData2(AFRLFiltered,AFRRFiltered, CYAN, RED);
+    }
+      if(screenPlotAFRBoost)
+    {
+      plotData3(AFRLFiltered,AFRRFiltered,BoostFiltered, CYAN, RED, GREEN, "AFRL", "AFRR", "BOOST","AFR", "AFR",  "PSI");
+    }
+    if(screenPlotAFRInj)
+    {
+      plotData3(AFRLFiltered,AFRRFiltered,injectorPulseWidth/10, CYAN, RED, GREEN, "AFRL", "AFRR", "IPW","AFR", "AFR",  "%/10");
+    }
+  #endif
   if(((millis()-lastLogTimemS) >logFrequencymS)&&logging)
   {
     logData();
@@ -200,21 +213,26 @@ void lookForLogButtonPush ()
         btLogSelButtonPushed = false;
             if(logging){
               startLogging();
-              if(screenMain)
-              {
-              lcd.setTextColor(TFT_GREEN,TFT_BLACK);
-              lcd.drawString("LOGGING             ", 275, 250, 4); 
-              lcd.setTextColor(TFT_WHITE,TFT_BLACK);
-              }
+               #if LCDScreen
+                if(screenMain)
+                {
+                lcd.setTextColor(TFT_GREEN,TFT_BLACK);
+                lcd.drawString("LOGGING             ", 275, 250, 4); 
+                lcd.setTextColor(TFT_WHITE,TFT_BLACK);
+                }
+              #endif
             }
             else{
             stopLogging();
-              if(screenMain)
-              {
-              lcd.setTextColor(TFT_MAROON,TFT_BLACK);
-              lcd.drawString("NOT LOGGING", 275, 250, 4); 
-              lcd.setTextColor(TFT_WHITE,TFT_BLACK);
-              }
+            
+              #if LCDScreen
+                if(screenMain)
+                {
+                lcd.setTextColor(TFT_MAROON,TFT_BLACK);
+                lcd.drawString("NOT LOGGING", 275, 250, 4); 
+                lcd.setTextColor(TFT_WHITE,TFT_BLACK);
+                }
+              #endif
             }
       }
     }

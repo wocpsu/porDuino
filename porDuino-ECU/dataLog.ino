@@ -22,6 +22,7 @@ void startLogging()
 }
 void deleteAllLogs()
 {
+#if SDCARD
   ///Stop Logging and Update screen and logging parameter to reflect that
   stopLogging();
   logging = false;
@@ -47,10 +48,11 @@ void deleteAllLogs()
      SD.remove(fileName); 
     }
   }
-  
+#endif  
 }
 void printRequestedLog()
 {
+#if SDCARD
    ///Stop Logging and Update screen and logging parameter to reflect that
   stopLogging();
   logging = false;
@@ -100,6 +102,7 @@ void printRequestedLog()
          Serial3.println("Sorry Requested Log: " + requestedLog + " Doesn't Exist");///File Doesn't Exist
       }
   }
+#endif
 }
 void stopLogging()
 {

@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include "graph.h"
-
+#if LCDScreen
 void Trace(TFT_HX8357 &tft, double x,  double y,  byte dp,
            double gx, double gy,
            double w, double h,
@@ -254,5 +254,5 @@ void plotData3(float y1Value,float y2Value,float y3Value, unsigned int color1, u
       lastTimePlotCalled = millis();
   } 
 }               
-  					   
+#endif					   
 						   

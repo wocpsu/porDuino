@@ -36,10 +36,11 @@ void lookForInjButtonPush ()
 void injectorCall()
 {
   manualInjFire = (!lastInjButtonState && injectorArmed);
+  //manualInjFire = (injectorArmed);
   autoInjFire = ((BoostFiltered >= injectorBoostOnLevel)&& (ThrottleFiltered >= injectorOnThrottleLevel) &&  (MAFFiltered >= injectorOnMAFLevel));
   if(autoInjFire||manualInjFire||injectorTestFireInjectors)
   {  
-    digitalWrite(InjectorRelayPin,LOW);
+    digitalWrite(InjectorRelayPin,relayClosed);
     #if sirenEnable
     analogWrite(sirenPin,150);
     #endif

@@ -1,5 +1,6 @@
 void printAFRS()
 {
+#if LCDScreen
     //lcd.setTextFont(4);
     //lcd.setCursor(10, 50);
     //lcd.print(AFRLFiltered, 1);
@@ -43,10 +44,11 @@ void printAFRS()
     {
     lcd.drawString("DISARMED",        275,200,4);
     }
-   
+#endif   
 }
 void initMainScreen()
 {
+#if LCDScreen
   lcd.setTextDatum(TL_DATUM);
   lcd.fillScreen(TFT_BLACK);
   lcd.setTextColor(ORANGE,TFT_BLACK);
@@ -93,4 +95,5 @@ void initMainScreen()
     lcd.setTextFont(4);
     lcd.setCursor(275, 275);
     lcd.print(fileName + "   ");
+#endif
 }

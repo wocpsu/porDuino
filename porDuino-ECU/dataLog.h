@@ -1,7 +1,6 @@
 #ifndef dataLog_h
 #define dataLog_h
 
-#define SDCARD 1
 #if SDCARD
 #include <SPI.h>
 #include <SD.h>
