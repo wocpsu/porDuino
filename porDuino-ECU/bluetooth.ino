@@ -93,6 +93,10 @@ void btDataCheck()
           {
             ATResetEEPROM();
           }   
+          else if(secondaryScreenSelect == 21)
+          {
+             resetFunction();  //call reset
+          }
 
       }
       else if (myBTFloat == 234.1)
@@ -195,4 +199,11 @@ void printDiagnosticsToBT()
     Serial3.print(",");
     Serial3.print(sensorFailure);
     Serial3.write("::??");  
+}
+
+void resetFunction ()
+{
+  wdt_disable();
+  wdt_enable(WDTO_15MS);
+  while (1) {}
 }

@@ -75,7 +75,7 @@ void ATResetEEPROM() ///Reset EEPROM Values to Defaults
        {
         ATSetVal = 1.0;
        }
-       else
+       else //Left Side of map
        {
         ATSetVal = 1.2;
        }

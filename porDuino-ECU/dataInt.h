@@ -1,17 +1,19 @@
 #ifndef dataInt_h
 #define dataInt_h
+#include <avr/wdt.h> //Watchdog timer to allow software reset
 ///Accounting for different versions of harware
 #define porDuinoVersion 2
   #if porDuinoVersion == 2
     #define relayClosed HIGH
     #define relayOpen LOW
   #else
-    #define SDCARD
-    #define LCDScreen
+    #define SDCARD true
+    #define LCDScreen true
     #define relayClosed LOW
     #define relayOpen HIGH
   #endif
 /////
+unsigned long avgLoopTimeMs;
 #include <EEPROM.h> //EEPROM Library for Auto Tune
 #include <TFT_HX8357.h> // Hardware-specific library
 #if LCDScreen
@@ -30,7 +32,7 @@ boolean btLogPrintButtonPushed;
 int myBTInt;
 ////////////////////Enable features
 #define btButton 1
-#define sirenEnable 1
+#define sirenEnable true
 #define injStartCheckerEnable 1
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //Pins Analog ins (A15 ARFLEFT, A14 AFRRIGHT, A13 BOOST, A12 OPEN, A11 MAF, A10 KNOCK, A9 THROTTLE, A8 RPM)
@@ -38,8 +40,8 @@ int myBTInt;
 /////OLDDDD Pins Analog Outs (D11 INJECTOR LEFT, D12 INJECTOR RIGHT)
 //Pins D10=LEDG,D9=LEDR,D8=LEDR
 //Pin Definitions Analog Inputs
-int AFRRightPin = A15;
-int AFRLeftPin = A14;
+int AFRRightPin = A14;////////NEED TO REWIRE THIS************currently flipped
+int AFRLeftPin = A15;////////NEED TO REWIRE THIS************currently flipped
 int BoostPin = A13;
 int MAFPin = A11;
 int KnockPin = A10;
@@ -58,6 +60,7 @@ int LEDPinError = 9;
 int LEDPinInjFiring= 8;
 int buttonLogPin = 6;
 int buttonFireInjPin = 5;
+//int resetPin = 3; ///Pin that's hardwired to reset to reboot the arduino
 //%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 //AFR Stuff
 float AFRLeft,AFRRight; 
@@ -87,7 +90,7 @@ boolean knockReset = true;
 float RPMFiltered;
 volatile unsigned int toothCount =0;
 float rpm;
-float teeth = 60; //number of teeth on 
+#define teeth  58 //number of teeth on flywheel
 #define RPMFilterTC 0.90
 //Injector Stuff
 boolean injectorsEnabled = false;
@@ -157,8 +160,11 @@ boolean screenPlotAFRInj = false;
 #define ATMinActiveRPM 2000
 #define ATMaxActiveBoost 9
 boolean ATSensorError = false;
+unsigned long ATSensorErrorState;
 boolean ATAFRLeftError = false;
+unsigned long ATAFRLeftErrorState;
 boolean ATAFRRightError = false;
+unsigned long ATAFRRightErrorState;
 #define ATAFRTarget 12.0
 #define ATGain 0.015 
 #define ATMaxAdjustPercent 0.35 ///Max Fuel adjustment to left and right

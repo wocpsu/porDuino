@@ -18,6 +18,13 @@ void setup()
   ///Open Relay so no power flows through injectors
   digitalWrite(InjectorRelayPin,relayOpen);
   digitalWrite(LEDPinError,HIGH);
+  digitalWrite(LEDPinG,HIGH);
+  digitalWrite(LEDPinInjFiring,HIGH);
+  #if sirenEnable
+  analogWrite(sirenPin,129);
+  #endif
+  delay(2000);
+  analogWrite(sirenPin,0);
   //TCCR1B = TCCR1B & B11111000 | B00000100;  // for for PWM frequency of 122.55 Hz
    TCCR1B = TCCR1B & B11111000 | B00000101;   // for  PWM frequency of 30.64 Hz
 //////////////LCD and OBD Init
@@ -70,11 +77,14 @@ void setup()
   #endif
   attachPinChangeInterrupt(digitalPinToPinChangeInterrupt(RPMPinD), rpmInterrupt, RISING);
   //pinMode(RPMPinD, INPUT_PULLUP);
+  Serial.println("Running Main Loop");
   delay(1000);
+
 }
 ///////////////////////////////////////MAIN LOOP START////////////////////////////////////////////
 void loop()
 {
+unsigned long loopStartTime = millis();
 btDataCheck();
 lookForLogButtonPush();
 lookForInjButtonPush();
@@ -124,19 +134,21 @@ alarmHandler();
     lastInjectorCallMillis = millis();
   }
   ATwriteToEEPROM();
-
+  avgLoopTimeMs = ((millis()-loopStartTime)+avgLoopTimeMs)/2;
+  //Serial.print("loop time(ms)= "); Serial.println(avgLoopTimeMs);
 }
 ///////////////////////////////////////MAIN LOOP END////////////////////////////////////////////
 
 void getInputs()
 {
   ////RPM Interrupt Stuff
-     if (toothCount >= 60) {
+     if (toothCount >= teeth) ///After we counted a full revolution worth of teeth
+     {
      rpm = ((toothCount/teeth)*60*1000)/(millis() - timeLastRPM);
      timeLastRPM = millis();
      toothCount = 0;   
      RPMFiltered = RPMFiltered*RPMFilterTC + rpm*(1-RPMFilterTC);    
-   }
+     }
   ////Read Input Voltages, convert to engineering units, then filter
   int AFRLeftValue = analogRead(AFRLeftPin);
   int AFRRightValue = analogRead(AFRRightPin);

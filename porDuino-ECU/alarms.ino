@@ -1,8 +1,13 @@
 ////////////////////////////////////Alarms///////////////////////
 void alarmHandler ()
 {
+///Adding Delays to AutoTune Alarms
+  boolean ATSensorErrorDly = booleanDelay(ATSensorError,500, ATSensorErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean ATAFRLeftErrorDly = booleanDelay(ATAFRLeftError,500, ATAFRLeftErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean ATAFRRightErrorDly = booleanDelay(ATAFRRightError,500, ATAFRRightErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+/////
   //Sensor Failures
-  if(ATSensorError || ATAFRLeftError || ATAFRRightError)
+  if(ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly)
   {
     if(ATSensorError)
     {
@@ -19,7 +24,7 @@ void alarmHandler ()
     sensorFailure = ATSensorErrorString + ATAFRLeftErrorString + ATAFRRightErrorString;
   }
   
-  boolean alarmActive = AFRLLean || AFRRLean || ATSensorError || ATAFRLeftError || ATAFRRightError;
+  boolean alarmActive = AFRLLean || AFRRLean || ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly;
   if(alarmActive)
   {
     alarmLatched = true;
@@ -113,3 +118,21 @@ void knockCounter()
 //float MAFFiltered;
 //float ThrottleFiltered;
 ////////////////////////////////////////////////////////////
+
+///boolean delay routine
+boolean booleanDelay(boolean conditionTrue,unsigned long delayTime, unsigned long& timeDelayed) //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+{
+  if(conditionTrue)
+  {
+    if((millis()-timeDelayed)>= delayTime)
+    {
+      return true;
+    }
+  }
+  else
+  {
+    timeDelayed = millis();
+    return false;
+  }
+  
+}
