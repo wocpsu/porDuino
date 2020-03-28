@@ -91,6 +91,10 @@ lookForInjButtonPush();
 getInputs();
 knockCounter();
 checkForLeanCondition();
+if(millis() > 20000) ///wait for 20 seconds until we call the sensor alarms routine
+{
+sensorAlarms();
+}
 alarmHandler();
   if(btLogDeleteButtonPushed)
   {
@@ -162,7 +166,7 @@ void getInputs()
   float BoostVolts = float(BoostValue) * (5.0 / 1023.0);
   float MAFVolts = float(MAFValue) * (5.0 / 1023.0);
   KnockVolts = KnockValue * (5.0 / 1023.0);
-  float ThrottleVolts = ThrottleValue * (5.0 / 1023.0);
+  ThrottleVolts = ThrottleValue * (5.0 / 1023.0);
   //Get AFRS
   AFRLeft = (2 * AFRLeftVolts) + 9;
   AFRRight = (2 * AFRRightVolts) + 9;

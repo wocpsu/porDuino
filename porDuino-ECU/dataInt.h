@@ -78,6 +78,7 @@ float maxBoost;
 #define MAFFilterTC 0.97
 float MAFFiltered;
 //Throttle Stuff
+float ThrottleVolts;
 float ThrottleFiltered;
 #define ThrottlefilterTC 0.96
 //Knock Stuff
@@ -197,5 +198,18 @@ String ATSensorErrorString = "";
 String ATAFRLeftErrorString = "";
 String ATAFRRightErrorString = "";
 String sensorFailure = "Sensors Ok";
-
+///Sensor Alarm Stuff
+boolean firstCallSensorAlarms = true;
+unsigned long RPMFailAlarmState;
+boolean RPMFailAlarm;
+boolean throttleFailAlarm;
+unsigned long throttleFailAlarmState;
+boolean MAFFailAlarm;
+unsigned long MAFFailAlarmState;
+boolean boostFailAlarm;
+unsigned long boostFailAlarmState;
+String MAFFailAlarmString ="";
+String throttleFailAlarmString ="";
+String RPMFailAlarmString ="";
+String boostFailAlarmString ="";
 #endif

@@ -7,7 +7,7 @@ void alarmHandler ()
   boolean ATAFRRightErrorDly = booleanDelay(ATAFRRightError,1000, ATAFRRightErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
 /////
   //Sensor Failures
-  if(ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly)
+  if(ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly || MAFFailAlarm || throttleFailAlarm || RPMFailAlarm || boostFailAlarm)
   {
     if(ATSensorError)
     {
@@ -21,10 +21,37 @@ void alarmHandler ()
     {
       ATAFRRightErrorString = "ATAFRRight,";
     }
-    sensorFailure = ATSensorErrorString + ATAFRLeftErrorString + ATAFRRightErrorString;
+    if(MAFFailAlarm)
+    {
+      MAFFailAlarmString = "MAFFAIL,";
+    }
+    if(throttleFailAlarm)
+    {
+      throttleFailAlarmString = "THROTFAIL,";
+    }
+    if(RPMFailAlarm)
+    {
+      RPMFailAlarmString = "RPMFAIL,";
+    }
+    if(boostFailAlarm)
+    {
+      boostFailAlarmString = "BOOSTFAIL,";
+    }
+    sensorFailure = ATSensorErrorString + ATAFRLeftErrorString + ATAFRRightErrorString + MAFFailAlarmString + throttleFailAlarmString + RPMFailAlarmString + boostFailAlarmString;
+  }
+  if (ackKnowledgeAlarm)
+  {
+    sensorFailure = "Sensors Ok";
+    ATSensorErrorString = "";
+    ATAFRLeftErrorString = "";
+    ATAFRRightErrorString = "";
+    MAFFailAlarmString = "";
+    throttleFailAlarmString = "";
+    RPMFailAlarmString = "";
+    boostFailAlarmString = "";
   }
   
-  boolean alarmActive = AFRLLean || AFRRLean || ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly;
+  boolean alarmActive = AFRLLean || AFRRLean || ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly || MAFFailAlarm || throttleFailAlarm || RPMFailAlarm || boostFailAlarm;
   if(alarmActive)
   {
     alarmLatched = true;
@@ -98,7 +125,7 @@ void checkForLeanCondition()
 }
 
 //////////////////////////Knock////////////////////////////////
-void knockCounter()
+void knockCounter()///Knock voltage will go to ground when a knock is detected
 {
   if((KnockVolts < knockThreshold) && (millis()>knockCountStartTime) && knockReset)
   {
@@ -110,17 +137,41 @@ void knockCounter()
     knockReset = true;
   }
 }
-///////////////////////Sensor Failure////////////////////////
-///to use
-//float AFRLFiltered
-//float AFRRFiltered
-//float BoostFiltered;
-//float MAFFiltered;
-//float ThrottleFiltered;
-////////////////////////////////////////////////////////////
+////////////////////////Sensor Alarms/////////////////////////
+void sensorAlarms() //This routine will detect any failures with the sensors used for the piggyback ecu, if the engine isn't running after 20 secs expect to see a lot of alarms
+///It may be a good exercise to add a pull down resistor to MAF, AFR, Boost and throttle so they aren't floating in an open circuit even
+{
+  //float ThrottleVolts
+  
+  if(firstCallSensorAlarms) ///Set alarm states to current time on first pass to avoid accidential instantaneous trigger of an alarm
+  {
+    RPMFailAlarmState = millis();
+    throttleFailAlarmState = millis();
+    MAFFailAlarmState = millis();
+    boostFailAlarmState = millis();
+    firstCallSensorAlarms = false;
+  }
+  
+  ///RPM
+  boolean RPMLow = (RPMFiltered < 500.0) || (RPMFiltered < 1500.0 && ThrottleFiltered > 30.0);
+  RPMFailAlarm = booleanDelay(RPMLow,5000, RPMFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  ///Throttle
+  boolean throttleVoltsBad = (ThrottleVolts < 0.3) || (ThrottleVolts > 4.5);
+  throttleFailAlarm = booleanDelay(throttleVoltsBad,5000, throttleFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  ///MAF
+  boolean MAFLow = (RPMFiltered > 2000) && (MAFFiltered < 10.0);
+  MAFFailAlarm = booleanDelay(MAFLow,5000, MAFFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  ///Boost
+  boolean boostFail = (ThrottleFiltered < 5.0) && (BoostFiltered > -2.0); ///If we have very little vaccum at idle
+  boostFailAlarm = booleanDelay(boostFail,5000, boostFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  
+  }
+
+
 
 ///boolean delay routine
 boolean booleanDelay(boolean conditionTrue,unsigned long delayTime, unsigned long& timeDelayed) //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+///I had to build this routine since arduino didn't have one. It uses a pointer to the passed in delay state (timeDelayed) in order to make the routine reusable
 {
   if(conditionTrue)
   {
