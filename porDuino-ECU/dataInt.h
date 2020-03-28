@@ -40,8 +40,8 @@ int myBTInt;
 /////OLDDDD Pins Analog Outs (D11 INJECTOR LEFT, D12 INJECTOR RIGHT)
 //Pins D10=LEDG,D9=LEDR,D8=LEDR
 //Pin Definitions Analog Inputs
-int AFRRightPin = A14;////////NEED TO REWIRE THIS************currently flipped
-int AFRLeftPin = A15;////////NEED TO REWIRE THIS************currently flipped
+int AFRRightPin = A15;
+int AFRLeftPin = A14;
 int BoostPin = A13;
 int MAFPin = A11;
 int KnockPin = A10;
@@ -121,11 +121,11 @@ boolean injectorTestRunning;
 boolean injectorTestFireInjectors;
 #define InjStrChkThrottleCancelThreshold 30 ////throtte threshold for canceling the start check
 #define InjStrChkAFRLessThanThres 15 ///AFR must be below this threshold to do the start check
-#define InjStrChkAFRGreaterThanThres 10.0 ///AFR must be greater than this threshold to do the start check
-#define InjStrChkAFRDropThreshold 1.5 //How much AFR ratio must drop to consider injector check to be good
+#define InjStrChkAFRGreaterThanThres 12.0 ///AFR must be greater than this threshold to do the start check
+#define InjStrChkAFRDropThreshold 1.0 //How much AFR ratio must drop to consider injector check to be good
 #define InjStrChkPulseTime 500 //How long to pulse injectors during start check
 #define InjStrChkAddTime 2000 //Additional Time to look at AFRS after test has run
-#define InjStrChkPW 12 //Pulse width percent for injector start check
+#define InjStrChkPW 6 //Pulse width percent for injector start check
 #define InjStrCheckWaitTime 10000//Time to wait after ECU Startup before running the injector start check
 #define InjTestMinMAF 2
 #define InjTestMaxMAF 50
@@ -185,7 +185,7 @@ boolean ackKnowledgeAlarm;
 boolean alarmLatched;
 boolean AFRLLean;
 boolean AFRRLean;
-#define AFRLeanAlarmThreshold 13
+//#define AFRLeanAlarmThreshold 13
 #define AFRLeanAlarmThresholdTD 1000 //Alarm time delay in ms
 boolean firstCountLThisEvent =true;
 boolean firstCountRThisEvent =true;

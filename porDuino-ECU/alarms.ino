@@ -2,9 +2,9 @@
 void alarmHandler ()
 {
 ///Adding Delays to AutoTune Alarms
-  boolean ATSensorErrorDly = booleanDelay(ATSensorError,500, ATSensorErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
-  boolean ATAFRLeftErrorDly = booleanDelay(ATAFRLeftError,500, ATAFRLeftErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
-  boolean ATAFRRightErrorDly = booleanDelay(ATAFRRightError,500, ATAFRRightErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean ATSensorErrorDly = booleanDelay(ATSensorError,1000, ATSensorErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean ATAFRLeftErrorDly = booleanDelay(ATAFRLeftError,1000, ATAFRLeftErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean ATAFRRightErrorDly = booleanDelay(ATAFRRightError,1000, ATAFRRightErrorState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
 /////
   //Sensor Failures
   if(ATSensorErrorDly || ATAFRLeftErrorDly || ATAFRRightErrorDly)
@@ -52,7 +52,7 @@ void checkForLeanCondition()
   if(autoInjFire)
   {
               ///Check left side for lean conditions with time delay
-              if(AFRLFiltered >= AFRLeanAlarmThreshold)
+              if(AFRLFiltered >= (ATAFRTarget+1))///If AFR is greater than the Autotune AFR Target plus a margin
               {
                   if(((millis()-AFRLeanLeftStartTime) >= AFRLeanAlarmThresholdTD)&& firstCountLThisEvent)
                   {
@@ -68,7 +68,7 @@ void checkForLeanCondition()
                     AFRLLean = false;
                }
                   ///Check Right side for lean conditions with time delay
-              if(AFRRFiltered >= AFRLeanAlarmThreshold)
+              if(AFRRFiltered >= (ATAFRTarget+1)) ///If AFR is greater than the Autotune AFR Target plus a margin
               {
                   if(((millis()-AFRLeanRightStartTime) >= AFRLeanAlarmThresholdTD)&& firstCountRThisEvent)
                   {
