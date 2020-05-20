@@ -77,6 +77,7 @@ float maxBoost;
 //MAF Stuff
 #define MAFFilterTC 0.97
 float MAFFiltered;
+float MAFVolts;
 //Throttle Stuff
 float ThrottleVolts;
 float ThrottleFiltered;
@@ -92,11 +93,11 @@ float RPMFiltered;
 volatile unsigned int toothCount =0;
 float rpm;
 #define teeth  58 //number of teeth on flywheel
-#define RPMFilterTC 0.90
+#define RPMFilterTC 0.70
 //Injector Stuff
 boolean injectorsEnabled = false;
-float injectorStartPWMVal = 30;
-float injectorEndPWMVal = 87;
+float injectorStartPWMVal = 10;//30;
+float injectorEndPWMVal = 40;//87;
 //float leftSidePWMult = 1.2; ///20% more for left side due to higher obsearved AFR
 //float rightSidePWMult = 1.0;
 float twoStepPWMVal = 10;
@@ -168,7 +169,7 @@ boolean ATAFRRightError = false;
 unsigned long ATAFRRightErrorState;
 #define ATAFRTarget 12.0
 #define ATGain 0.015 
-#define ATMaxAdjustPercent 0.35 ///Max Fuel adjustment to left and right
+#define ATMaxAdjustPercent 0.30 ///Max Fuel adjustment to left and right
 #define ATMinRPM 3000
 #define ATRPMSteps 500 //RPM Table Step Size
 #define ATNumRPMBands 8

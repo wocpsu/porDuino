@@ -11,31 +11,31 @@ void alarmHandler ()
   {
     if(ATSensorError)
     {
-      ATSensorErrorString = "ATSens,";
+      ATSensorErrorString = "ATSens|";
     }
     if(ATAFRLeftError)
     {
-      ATAFRLeftErrorString = "ATAFRLeft,";
+      ATAFRLeftErrorString = "ATAFRLeft|";
     }
     if(ATAFRRightError)
     {
-      ATAFRRightErrorString = "ATAFRRight,";
+      ATAFRRightErrorString = "ATAFRRight|";
     }
     if(MAFFailAlarm)
     {
-      MAFFailAlarmString = "MAFFAIL,";
+      MAFFailAlarmString = "MAFFAIL|";
     }
     if(throttleFailAlarm)
     {
-      throttleFailAlarmString = "THROTFAIL,";
+      throttleFailAlarmString = "THROTFAIL|";
     }
     if(RPMFailAlarm)
     {
-      RPMFailAlarmString = "RPMFAIL,";
+      RPMFailAlarmString = "RPMFAIL|";
     }
     if(boostFailAlarm)
     {
-      boostFailAlarmString = "BOOSTFAIL,";
+      boostFailAlarmString = "BOOSTFAIL|";
     }
     sensorFailure = ATSensorErrorString + ATAFRLeftErrorString + ATAFRRightErrorString + MAFFailAlarmString + throttleFailAlarmString + RPMFailAlarmString + boostFailAlarmString;
   }
@@ -65,7 +65,7 @@ void alarmHandler ()
 
   if(alarmLatched)
   {
-   analogWrite(LEDPinError, 100); 
+   analogWrite(LEDPinError, 100);
   }
   else
   {
@@ -159,13 +159,14 @@ void sensorAlarms() //This routine will detect any failures with the sensors use
   boolean throttleVoltsBad = (ThrottleVolts < 0.3) || (ThrottleVolts > 4.5);
   throttleFailAlarm = booleanDelay(throttleVoltsBad,5000, throttleFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
   ///MAF
-  boolean MAFLow = (RPMFiltered > 2000) && (MAFFiltered < 10.0);
-  MAFFailAlarm = booleanDelay(MAFLow,5000, MAFFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  boolean MAFLow = (RPMFiltered > 2000.0) && (MAFFiltered < 3.0);
+  MAFFailAlarm = booleanDelay(MAFLow,10000, MAFFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
   ///Boost
-  boolean boostFail = (ThrottleFiltered < 5.0) && (BoostFiltered > -2.0); ///If we have very little vaccum at idle
+  boolean boostFail = (ThrottleFiltered < 5.0) && (BoostFiltered > -2.0) && (RPMFiltered < 1100.0); ///If we have very little vaccum at idle
   boostFailAlarm = booleanDelay(boostFail,5000, boostFailAlarmState); //boolean alarm, unsigned long timedelay in ms,unsigned long saved state since true
+  //Serial.print("RPMFail "); Serial.print(RPMFailAlarm); Serial.print(" ThrottleFail "); Serial.print(throttleFailAlarm); Serial.print(" MAFFail "); Serial.print(MAFFailAlarm); Serial.print(" boostFail "); Serial.println(boostFailAlarm);
   
-  }
+}
 
 
 
@@ -178,6 +179,10 @@ boolean booleanDelay(boolean conditionTrue,unsigned long delayTime, unsigned lon
     if((millis()-timeDelayed)>= delayTime)
     {
       return true;
+    }
+    else
+    {
+      return false;
     }
   }
   else

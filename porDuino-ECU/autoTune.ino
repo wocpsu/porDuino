@@ -77,7 +77,7 @@ void ATResetEEPROM() ///Reset EEPROM Values to Defaults
        }
        else //Left Side of map
        {
-        ATSetVal = 1.2;
+        ATSetVal = 1.0;
        }
        ATMapRAM[i]=ATSetVal;
        EEPROM.put(i*4, ATSetVal);

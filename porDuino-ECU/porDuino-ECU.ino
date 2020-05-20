@@ -140,6 +140,7 @@ alarmHandler();
   ATwriteToEEPROM();
   avgLoopTimeMs = ((millis()-loopStartTime)+avgLoopTimeMs)/2;
   //Serial.print("loop time(ms)= "); Serial.println(avgLoopTimeMs);
+  //delay(250);
 }
 ///////////////////////////////////////MAIN LOOP END////////////////////////////////////////////
 
@@ -164,7 +165,7 @@ void getInputs()
   float AFRLeftVolts = AFRLeftValue * (5.0 / 1023.0);
   float AFRRightVolts = AFRRightValue * (5.0 / 1023.0);
   float BoostVolts = float(BoostValue) * (5.0 / 1023.0);
-  float MAFVolts = float(MAFValue) * (5.0 / 1023.0);
+  MAFVolts = float(MAFValue) * (5.0 / 1023.0);
   KnockVolts = KnockValue * (5.0 / 1023.0);
   ThrottleVolts = ThrottleValue * (5.0 / 1023.0);
   //Get AFRS
